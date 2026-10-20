@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tiger7 Investor · 테마 증권 연구소</title>
+  <meta name="description" content="체계적 테마 증권에 대한 월간 연구 자료 아카이브">
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg: #0a0a0f;
+      --bg-soft: #12121a;
+      --surface: #16161f;
+      --border: #262630;
+      --text: #e8e8ed;
+      --text-dim: #9898a8;
+      --accent: #00e5a0;
+      --accent-dim: #00b87d;
+      --accent-glow: rgba(0, 229, 160, 0.15);
+      --danger: #ff4d6d;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* Background grid + glow */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(0, 229, 160, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 229, 160, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    body::after {
+      content: '';
+      position: fixed;
+      top: -30%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80vw;
+      height: 80vh;
+      background: radial-gradient(circle, var(--accent-glow) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+      filter: blur(60px);
+    }
+
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ===== NAV ===== */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(20px);
+      background: rgba(10, 10, 15, 0.7);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 18px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-weight: 800;
+      font-size: 1.05rem;
+      letter-spacing: -0.02em;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text);
+    }
+
+    .logo-mark {
+      width: 26px;
+      height: 26px;
+      background: var(--accent);
+      clip-path: polygon(0 100%, 35% 40%, 55% 65%, 100% 0, 100% 100%);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-dim);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover {
+      color: var(--accent);
+    }
+
+    /* ===== HERO ===== */
+    header.hero {
+      padding: 120px 0 100px;
+      text-align: left;
+    }
+
+    .eyebrow {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .eyebrow::before {
+      content: '';
+      width: 32px;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      margin-bottom: 28px;
+    }
+
+    h1 .highlight {
+      color: var(--accent);
+      position: relative;
+    }
+
+    .hero-sub {
+      font-size: clamp(1rem, 2vw, 1.2rem);
+      color: var(--text-dim);
+      max-width: 640px;
+      font-weight: 300;
+      line-height: 1.7;
+    }
+
+    /* Ticker tape */
+    .ticker {
+      margin-top: 48px;
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 0;
+      overflow: hidden;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+    }
+
+    .ticker-track {
+      display: flex;
+      gap: 48px;
+      animation: scroll 40s linear infinite;
+      white-space: nowrap;
+    }
+
+    .ticker-track span::before {
+      content: '▲ ';
+      color: var(--accent);
+    }
+
+    .ticker-track span:nth-child(even)::before {
+      content: '▼ ';
+      color: var(--danger);
+    }
+
+    @keyframes scroll {
+      from { transform: translateX(0); }
+      to { transform: translateX(-50%); }
+    }
+
+    /* ===== SECTION HEADERS ===== */
+    section {
+      padding: 60px 0;
+    }
+
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 48px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 20px;
+    }
+
+    .section-head h2 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    .section-head .count {
+      font-family: var(--mono);
+      font-size: 0.85rem;
+      color: var(--accent);
+    }
+
+    /* ===== POST GRID ===== */
+    .post-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .post-card {
+      display: block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      text-decoration: none;
+      color: inherit;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .post-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: var(--accent);
+      transform: scaleX(0);
+      transform-origin: left;
+      transition: transform 0.4s;
+    }
+
+    .post-card:hover {
+      border-color: var(--accent-dim);
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0, 229, 160, 0.08);
+    }
+
+    .post-card:hover::before {
+      transform: scaleX(1);
+    }
+
+    .post-date {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    .post-card h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .post-card p {
+      font-size: 0.9rem;
+      color: var(--text-dim);
+      line-height: 1.6;
+      margin-bottom: 20px;
+    }
+
+    .post-meta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    .post-meta::after {
+      content: '→';
+      transition: transform 0.3s;
+    }
+
+    .post-card:hover .post-meta::after {
+      transform: translateX(4px);
+    }
+
+    .post-card.featured {
+      grid-column: span 2;
+      background: linear-gradient(135deg, var(--bg-soft) 0%, var(--surface) 100%);
+    }
+
+    .post-card.featured h3 {
+      font-size: 1.5rem;
+    }
+
+    @media (max-width: 700px) {
+      .post-card.featured {
+        grid-column: span 1;
+      }
+    }
+
+    /* Empty state */
+    .empty-state {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--text-dim);
+    }
+
+    .empty-state code {
+      font-family: var(--mono);
+      background: var(--surface);
+      padding: 3px 8px;
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: 0.85rem;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+      margin-top: 60px;
+    }
+
+    .footer-inner {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .footer-inner p {
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+
+    .footer-inner a {
+      color: var(--accent);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .footer-inner a:hover {
+      text-decoration: underline;
+    }
+
+    /* Reveal animation */
+    .reveal {
+      opacity: 0;
+      transform: translateY(20px);
+      animation: reveal 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+    }
+
+    @keyframes reveal {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .reveal:nth-child(1) { animation-delay: 0.1s; }
+    .reveal:nth-child(2) { animation-delay: 0.2s; }
+    .reveal:nth-child(3) { animation-delay: 0.3s; }
+    .reveal:nth-child(4) { animation-delay: 0.4s; }
+    .reveal:nth-child(5) { animation-delay: 0.5s; }
+    .reveal:nth-child(6) { animation-delay: 0.6s; }
+  </style>
+</head>
+<body>
+
+  <!-- ===== NAV ===== -->
+  <nav>
+    <div class="nav-inner">
+      <a href="/" class="logo">
+        <span class="logo-mark"></span>
+        Tiger7 INVESTOR
+      </a>
+      <ul class="nav-links">
+        <li><a href="#research">Research</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="https://github.com/tiger7" target="_blank">GitHub ↗</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <header class="hero">
+    <div class="container">
+      <div class="eyebrow reveal">Systematic Theme Security Research</div>
+      <h1 class="reveal">
+        시장의 <span class="highlight">테마</span>를<br>
+        체계적으로 추적합니다.
+      </h1>
+      <p class="hero-sub reveal">
+        Tiger7 Investor는 테마 증권에 대한 실증 연구와 
+        월간 발표 자료를 공유하는 공간입니다. 데이터 기반의 정량적 접근으로 
+        시장의 구조적 움직임을 분석합니다.
+      </p>
+
+      <div class="ticker reveal">
+        <div class="ticker-track">
+          <span>Time-Series Momentum</span>
+          <span>Cross-Sectional Momentum</span>
+          <span>Moving Average Crossover</span>
+          <span>Breakout Systems</span>
+          <span>Volatility Targeting</span>
+          <span>Risk Parity</span>
+          <span>Time-Series Momentum</span>
+          <span>Cross-Sectional Momentum</span>
+          <span>Moving Average Crossover</span>
+          <span>Breakout Systems</span>
+          <span>Volatility Targeting</span>
+          <span>Risk Parity</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===== RESEARCH POSTS ===== -->
+  <section id="research">
+    <div class="container">
+      <div class="section-head">
+        <h2>Monthly Research</h2>
+        <span class="count">{{ site.posts.size }} posts</span>
+      </div>
+
+      <div class="post-grid">
+        {% for post in site.posts %}
+          {% if forloop.first %}
+            <!-- 최신 글 = Featured -->
+            <a href="{{ post.url | relative_url }}" class="post-card featured reveal">
+              <span class="post-date">{{ post.date | date: "%Y · %m" }} — LATEST</span>
+              <h3>{{ post.title }}</h3>
+              {% if post.excerpt %}
+                <p>{{ post.excerpt | strip_html | truncate: 160 }}</p>
+              {% elsif post.description %}
+                <p>{{ post.description }}</p>
+              {% endif %}
+              <span class="post-meta">발표자료 보기</span>
+            </a>
+          {% else %}
+            <a href="{{ post.url | relative_url }}" class="post-card reveal">
+              <span class="post-date">{{ post.date | date: "%Y · %m" }}</span>
+              <h3>{{ post.title }}</h3>
+              {% if post.excerpt %}
+                <p>{{ post.excerpt | strip_html | truncate: 100 }}</p>
+              {% elsif post.description %}
+                <p>{{ post.description }}</p>
+              {% endif %}
+              <span class="post-meta">발표자료 보기</span>
+            </a>
+          {% endif %}
+        {% else %}
+          <div class="empty-state">
+            <p>아직 발표된 자료가 없습니다.</p>
+            <p style="margin-top: 12px;">
+              <code>_posts/YYYY-MM-DD-title.html</code> 형식으로 파일을 추가하면 
+              자동으로 여기에 표시됩니다.
+            </p>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ABOUT ===== -->
+  <section id="about">
+    <div class="container">
+      <div class="section-head">
+        <h2>About</h2>
+      </div>
+      <p style="max-width: 720px; color: var(--text-dim); font-size: 1.05rem; line-height: 1.8;">
+        Tiger7 Investor는 시장의 비효율과 테마 현상을 정량적으로 연구하는 개인 연구 
+        프로젝트입니다. 매달 한 두개의 주제를 선정하여 체계적 비이성적인 시장(Irrational Market)에 대한 
+        분석과 발표 자료를 공유합니다. 모든 자료는 오픈소스 정신에 따라 공개됩니다.
+      </p>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer>
+    <div class="container footer-inner">
+      <p>© {{ site.time | date: "%Y" }} 피지스 투자연구소 · Systematic Security Research</p>
+      <a href="https://github.com/tiger7" target="_blank">github.com/tiger7 ↗</a>
+    </div>
+  </footer>
+
+</body>
+</html>
